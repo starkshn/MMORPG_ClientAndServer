@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Google.Protobuf.Protocol;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,23 +8,23 @@ using static Define;
 public class SkillRunner : MonoBehaviour
 {
     public Dictionary<SkillType, List<DirectionalSkillSet>>   _skillTables;
-    Func<MoveDir>                                       _getDir;                        // Player쪽에서 _lastDir을 넘겨줄 콜백
+    Func<MoveDir>                           _getDir;                        // Player쪽에서 _lastDir을 넘겨줄 콜백
 
 
-    SkillAsset                                          _currentSkill = null;           // 현재 스킬
-    SkillAsset                                          _expectedSkill = null;          // 콤보 기대 스킬
-    float                                               _lockUntil = 0.0f;
-    float                                               _comboUntil = 0.0f;
-    MoveDir                                             _currentSkillDir = MoveDir.Down; // 마지막 스킬 방향
-    MoveDir                                             _lastSkillDir = MoveDir.Down; // 마지막 스킬 방향
+    SkillAsset                              _currentSkill = null;           // 현재 스킬
+    SkillAsset                              _expectedSkill = null;          // 콤보 기대 스킬
+    float                                   _lockUntil = 0.0f;
+    public float                            _comboUntil = 0.0f;
+    MoveDir                                 _currentSkillDir = MoveDir.Down; // 마지막 스킬 방향
+    MoveDir                                 _lastSkillDir = MoveDir.Down; // 마지막 스킬 방향
 
-    public SkillType                                    CurrentType { get; set; } = SkillType.Sword;
+    public SkillType                        CurrentType { get; set; } = SkillType.Sword;
 
-    public event Action                                 OnSkillEnded;  // ← 종료 알림
-    int                                                 _castSerial = 0;
-    Coroutine                                           _coSkillEndToPlayer;
-    Coroutine                                           _coSkillEnd;
-    int                                                 _pressedCount = 0;
+    public event Action                     OnSkillEnded;  // ← 종료 알림
+    int                                     _castSerial = 0;
+    Coroutine                               _coSkillEndToPlayer;
+    Coroutine                               _coSkillEnd;
+    public int                              _pressedCount = 0;
 
 
     // Runner가 어떤 스킬을 골랐는지 알려주기 → Player가 애니 재생
@@ -90,7 +91,6 @@ public class SkillRunner : MonoBehaviour
         _currentSkillDir = dir;
 
         OnSkillStarted?.Invoke(asset, dir);
-
 
         _castSerial++;
         if (_coSkillEndToPlayer != null)

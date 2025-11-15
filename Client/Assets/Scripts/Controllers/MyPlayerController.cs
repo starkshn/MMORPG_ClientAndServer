@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Google.Protobuf.Protocol;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Define;
@@ -12,13 +13,12 @@ public class MyPlayerController : PlayerController
 
     protected override void UpdateController()
     {
-
         switch(State)
         {
-            case Define.CState.Idle:
+            case CState.Idle:
                 GetDirInput();
                 break;
-            case Define.CState.Moving:
+            case CState.Moving:
                 GetDirInput();
                 break;
         }
@@ -35,7 +35,28 @@ public class MyPlayerController : PlayerController
             return;
         }
 
-        GetSkillInput();
+        if (_coSkillCooltime == null && Input.GetKeyDown(KeyCode.Space))
+        {
+            // 마지막 콤보인경우
+            if (_skillRunner._pressedCount == 3)
+            {
+                CoInputCooltime(_skillRunner._comboUntil + 0.1f);
+                return;
+            }
+            Debug.Log("Skill!");
+
+            GetSkillInput();
+
+            // 스킬 쿨 타임, 키 무한 입력 방지
+            _coSkillCooltime = StartCoroutine("CoInputCooltime", 0.1f);
+        }
+    }
+
+    Coroutine _coSkillCooltime;
+    IEnumerator CoInputCooltime(float time)
+    {
+        yield return new WaitForSeconds(time);
+        _coSkillCooltime = null;
     }
 
     void LateUpdate()
@@ -73,20 +94,80 @@ public class MyPlayerController : PlayerController
         // Idle일 때만, 스킬이 사용가능해서 사용하는 경우
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (_skillRunner.TryPlay(SkillType.Sword)) // 현재 타입으로 자동 선택(방향/콤보 포함)
-                State = CState.Skill;
+            //if (_skillRunner.TryPlay(SkillType.Sword)) // 현재 타입으로 자동 선택(방향/콤보 포함)
+            //    State = CState.Skill;
+
+            C_Skill skill = new C_Skill()
+            {
+                Info = new SkillInfo()
+            };
+            skill.Info.SkillId = 1;
+            Managers.Network.Send(skill);
+
         }
         else if (Input.GetKeyDown(KeyCode.X))
         {
-            if (_skillRunner.TryPlay(SkillType.Arrow))
-            {
-                State = CState.Skill;
+            // if (_skillRunner.TryPlay(SkillType.Arrow))
+            // {
+            //     State = CState.Skill;
+            // 
+            //     // TODO
+            //     {
+            //         GameObject go = Managers.Resource.Instantiate("Creature/Arrow");
+            //         ArrowController ac = go.GetComponent<ArrowController>();
+            //         ac.Dir = _lastDir;
+            //         ac.CellPos = CellPos;
+            //     }
+            // }
+        }
+    }
 
-                GameObject go = Managers.Resource.Instantiate("Creature/Arrow");
-                ArrowController ac = go.GetComponent<ArrowController>();
-                ac.Dir = _lastDir;
-                ac.CellPos = CellPos;
+    protected override void MoveToNextPos()
+    {
+        if (Dir == MoveDir.None)
+        {
+            State = CState.Idle;
+            CheckUpdatedFlag();
+            return;
+        }
+
+        Vector3Int destPos = CellPos;
+
+        switch (Dir)
+        {
+            case MoveDir.Up:
+                destPos += Vector3Int.up;
+                break;
+            case MoveDir.Down:
+                destPos += Vector3Int.down;
+                break;
+            case MoveDir.Left:
+                destPos += Vector3Int.left;
+                break;
+            case MoveDir.Right:
+                destPos += Vector3Int.right;
+                break;
+        }
+
+        if (Managers.Map.CanGo(destPos))
+        {
+            if (Managers.Obj.Find(destPos) == null)
+            {
+                CellPos = destPos;
             }
+        }
+
+        CheckUpdatedFlag();
+    }
+
+    protected override void CheckUpdatedFlag()
+    {
+        if (_updated == true)
+        {
+            C_Move movePacket = new C_Move();
+            movePacket.PosInfo = PosInfo;
+            Managers.Network.Send(movePacket);
+            _updated = false;
         }
     }
 }

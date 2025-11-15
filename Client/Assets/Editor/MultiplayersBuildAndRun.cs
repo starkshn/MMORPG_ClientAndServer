@@ -21,7 +21,7 @@ public class MultiplayersBuildAndRun
     [MenuItem("Tool/Run MultiPlayer/3 Players")]
     static void PerformWin64Build3()
     {
-        PerformWin64Build(4);
+        PerformWin64Build(3);
     }
 
     [MenuItem("Tool/Run MultiPlayer/4 Players")]
@@ -29,7 +29,6 @@ public class MultiplayersBuildAndRun
     {
         PerformWin64Build(4);
     }
-
 
     static void PerformWin64Build(int playerCount)
     {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using static Define;
+using Google.Protobuf.Protocol;
 
 
 /// AI가 컨트롤러에게 돌려주는 액션 종류

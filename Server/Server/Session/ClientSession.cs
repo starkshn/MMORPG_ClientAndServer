@@ -33,22 +33,24 @@ namespace Server
 		{
             Console.WriteLine($"OnConnected : {endPoint}");
 
-			// TODO : Player 만드는 부분 Test
 			{
-				MyPlayer = PlayerManager.Instance.Add();
-				{
-					MyPlayer.Info.Name = $"Player_{MyPlayer.Info.PlayerId}";
-					MyPlayer.Info.PosX = 0;
-					MyPlayer.Info.PosY = 0;
-					MyPlayer.Session = this;
+                MyPlayer = PlayerManager.Instance.Add();
+                {
+                    MyPlayer.Info.Name = $"Player_{MyPlayer.Info.PlayerId}";
+                    MyPlayer.Info.PosInfo.State = CState.Idle;
+                    MyPlayer.Info.PosInfo.MoveDir = MoveDir.None;
+                    MyPlayer.Info.PosInfo.PosX = 0;
+                    MyPlayer.Info.PosInfo.PosY = 0;
+
+                    MyPlayer.Session = this;
                 }
-				RoomManager.Instance.Find(1).EnterGame(MyPlayer);
+                RoomManager.Instance.Find(1).EnterGame(MyPlayer);
             }
         }
 
         public override void OnRecvPacket(ArraySegment<byte> buffer)
 		{
-			// PacketManager.Instance.OnRecvPacket(this, buffer);
+			PacketManager.Instance.OnRecvPacket(this, buffer);
 		}
 
 		public override void OnDisconnected(EndPoint endPoint)

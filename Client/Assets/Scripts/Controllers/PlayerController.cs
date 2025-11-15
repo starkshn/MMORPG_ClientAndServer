@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Google.Protobuf.Protocol;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Define;
@@ -44,7 +45,11 @@ public class PlayerController : BaseController
                 _skillRunner.OnSkillStarted += (asset, dir) => PlayAttackDirectional(asset);
                 _skillRunner.OnSkillEnded += () =>
                 {
-                    if (State == CState.Skill) State = CState.Idle;
+                    if (State == CState.Skill)
+                    {
+                        State = CState.Idle;
+                        CheckUpdatedFlag();
+                    }
                 };
             }
 
@@ -60,7 +65,11 @@ public class PlayerController : BaseController
                 _skillRunner.OnSkillStarted += (asset, dir) => PlayAttackDirectional(asset);
                 _skillRunner.OnSkillEnded += () =>
                 {
-                    if (State == CState.Skill) State = CState.Idle;
+                    if (State == CState.Skill)
+                    {
+                        State = CState.Idle;
+
+                    }
                 };
             }
         }
@@ -92,7 +101,7 @@ public class PlayerController : BaseController
         }
         else if (State == CState.Moving)
         {
-            switch (_dir)
+            switch (Dir)
             {
                 case MoveDir.Up:
                     _animator.Play("WALK_BACK");
@@ -136,11 +145,6 @@ public class PlayerController : BaseController
             _animator.Play(asset._animName);
     }
 
-    void LateUpdate()
-    {
-        Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
-    }
-
     protected override void UpdateIdle()
     {
         // 이동 상태로 갈지 확인
@@ -149,5 +153,24 @@ public class PlayerController : BaseController
             State = CState.Moving;
             return;
         }
+    }
+
+    public void UseSkill(int skillId)
+    {
+        if (skillId == 1)
+        {
+            // Skill 사용
+            // 현재 타입으로 자동 선택(방향/콤보 포함)
+            if (_skillRunner.TryPlay(SkillType.Sword))
+            {
+                _updated = true;
+                State = CState.Skill;
+            }
+        }
+    }
+
+    protected virtual void CheckUpdatedFlag()
+    {
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Google.Protobuf.Protocol;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -26,10 +27,10 @@ public class MonsterController : BaseController
 
     public override CState State
     {
-        get { return _state; }
+        get { return PosInfo.State; }
         set
         {
-            if (_state == value)
+            if (PosInfo.State == value)
                 return;
 
             base.State = value;
@@ -160,7 +161,7 @@ public class MonsterController : BaseController
         }
 
         // 충돌 범위에서 제외
-        Managers.Obj.Remove(gameObject);
+        Managers.Obj.Remove(Id);
 
         State = CState.Dead;
 
