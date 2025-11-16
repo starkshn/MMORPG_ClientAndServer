@@ -1,11 +1,13 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
+using Server.Data;
 using Server.Game;
 using Server.Game.Object;
 using Server.Game.Room;
 using ServerCore;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -43,6 +45,15 @@ namespace Server
                     MyPlayer.Info.PosInfo.MoveDir = MoveDir.Down;
                     MyPlayer.Info.PosInfo.PosX = 0;
                     MyPlayer.Info.PosInfo.PosY = 0;
+
+                    Stat stat = null;
+                    DataManager.StatDict.TryGetValue(1, out stat);
+                    MyPlayer.Stat.Level = stat.level;
+                    MyPlayer.Stat.Hp = stat.maxHp;
+                    MyPlayer.Stat.MaxHp = stat.maxHp;
+                    MyPlayer.Stat.Attack = stat.attack;
+                    MyPlayer.Stat.TotalExp = stat.totalExp;
+                    MyPlayer.Stat.Speed = stat.speed;
 
                     MyPlayer.Session = this;
                 }

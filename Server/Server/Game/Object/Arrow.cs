@@ -14,12 +14,14 @@ namespace Server.Game
 
         public override void Update()
         {
-            if (Owner == null || Room == null)
+            if (Data == null || Data.projectile == null || Owner == null || Room == null)
                 return;
+
             if (_nextMoveTick >= Environment.TickCount64)
                 return;
 
-            _nextMoveTick = Environment.TickCount64 + 50;
+            long tick = (long)(1000 / Data.projectile.speed);
+            _nextMoveTick = Environment.TickCount64 + tick;
 
             Vector2Int destPos = GetFrontCellPos();
             if (Room.Map.CanGo(destPos))
@@ -31,16 +33,18 @@ namespace Server.Game
                 movePacket.PosInfo = PosInfo;
                 Room.Broadcast(movePacket);
 
-                Console.WriteLine($"Move Arrow");
+                Console.WriteLine("Move Arrow");
             }
             else
             {
                 GameObject target = Room.Map.Find(destPos);
                 if (target != null)
                 {
-                    // TODO : 피격판정
+                    // TODO : 피격 판정
+                    target.OnDamaged(this, Data.damage + Owner.Stat.Attack);
                 }
 
+                // 소멸
                 Room.LeaveGame(Id);
             }
         }

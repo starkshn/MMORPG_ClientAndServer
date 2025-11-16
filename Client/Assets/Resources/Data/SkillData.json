@@ -1,0 +1,24 @@
+{
+  "skills": [
+    {
+      "id": "1",
+      "name": "Sword",
+      "cooldown": "0.2",
+      "damage": "10",
+      "skillType": "SkillSword"
+    },
+    {
+      "id": "2",
+      "name": "Arrow",
+      "cooldown": "0.2",
+      "damage": "5",
+      "skillType": "SkillProjectile",
+      "projectile": {
+        "name": "Arrow",
+        "speed": "20.0",
+        "range": "10",
+        "prefab": "Creature/Arrow"
+      }
+    }
+  ]
+} 

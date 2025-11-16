@@ -37,10 +37,10 @@ public class PlayerController : BaseController
 
                 _swordSet = new DirectionalSkillSet { _right = r1, _front = f1, _back = b1, _left = null };
 
-                var table = new Dictionary<SkillType, DirectionalSkillSet> { { SkillType.Sword, _swordSet } };
+                var table = new Dictionary<SkillType, DirectionalSkillSet> { { SkillType.SkillSword, _swordSet } };
 
                 _skillRunner.Configure(table, () => Dir);
-                _skillRunner.CurrentType = SkillType.Sword;
+                _skillRunner.CurrentType = SkillType.SkillSword;
 
                 _skillRunner.OnSkillStarted += (asset, dir) => PlayAttackDirectional(asset);
                 _skillRunner.OnSkillEnded += () =>
@@ -59,7 +59,7 @@ public class PlayerController : BaseController
                 var f1 = SetSkillAsset("ATTACK_ARROW_FRONT", 0.5f, 0.5f);
                 var b1 = SetSkillAsset("ATTACK_ARROW_BACK", 0.5f, 0.5f);
                 _ArrowSet = new DirectionalSkillSet { _right = r1, _front = f1, _back = b1, _left = null };
-                var table = new Dictionary<SkillType, DirectionalSkillSet> { { SkillType.Arrow, _ArrowSet } };
+                var table = new Dictionary<SkillType, DirectionalSkillSet> { { SkillType.SkillProjectile, _ArrowSet } };
                 _skillRunner.Configure(table, () => Dir);
 
                 _skillRunner.OnSkillStarted += (asset, dir) => PlayAttackDirectional(asset);
@@ -145,7 +145,15 @@ public class PlayerController : BaseController
         {
             // Skill 사용
             // 현재 타입으로 자동 선택(방향/콤보 포함)
-            if (_skillRunner.TryPlay(SkillType.Sword))
+            if (_skillRunner.TryPlay(SkillType.SkillSword))
+            {
+                _updated = true;
+                State = CState.Skill;
+            }
+        }
+        else if (skillId == 2)
+        {
+            if (_skillRunner.TryPlay(SkillType.SkillProjectile))
             {
                 _updated = true;
                 State = CState.Skill;

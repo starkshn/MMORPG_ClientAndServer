@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Define
 {
-    public enum SkillType { Sword, Arrow, /*, Water, Chop, Mine, Arrow ...*/ }
-
-
     public enum Scene
     {
         Unknown,

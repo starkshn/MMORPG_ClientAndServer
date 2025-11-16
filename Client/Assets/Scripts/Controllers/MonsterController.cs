@@ -18,7 +18,6 @@ public class MonsterController : BaseController
     [SerializeField]
     GameObject                  _target;
 
-
     [SerializeField]
     float                       _searchRange = 5.0f;
 
@@ -64,10 +63,10 @@ public class MonsterController : BaseController
             var b1 = SetSkillAsset("ATTACK_BACK", 0.25f, 0.5f);
             _swordSet = new DirectionalSkillSet { _right = r1, _front = f1, _back = b1, _left = null };
 
-            var table = new Dictionary<SkillType, DirectionalSkillSet> { { SkillType.Sword, _swordSet } };
+            var table = new Dictionary<SkillType, DirectionalSkillSet> { { SkillType.SkillSword, _swordSet } };
 
             _skillRunner.Configure(table, () => Dir);
-            _skillRunner.CurrentType = SkillType.Sword;
+            _skillRunner.CurrentType = SkillType.SkillSword;
 
             _skillRunner.OnSkillStarted += (asset, dir) => PlayAttackDirectional(asset);
             _skillRunner.OnSkillEnded += () =>
@@ -110,7 +109,7 @@ public class MonsterController : BaseController
             if (dir.magnitude <= _skillRange && (dir.x == 0 || dir.y == 0))
             {
                 Dir = GetDirFromVec(dir);
-                if (_skillRunner.TryPlay(SkillType.Sword))
+                if (_skillRunner.TryPlay(SkillType.SkillSword))
                     State = CState.Skill;
                 return;
             }

@@ -122,19 +122,21 @@ public class MyPlayerController : PlayerController
         }
         else if (Input.GetKeyDown(KeyCode.X))
         {
-            // if (_skillRunner.TryPlay(SkillType.Arrow))
-            // {
-            //     State = CState.Skill;
-            // 
-            //     // TODO
-            //     {
-            //         GameObject go = Managers.Resource.Instantiate("Creature/Arrow");
-            //         ArrowController ac = go.GetComponent<ArrowController>();
-            //         ac.Dir = _lastDir;
-            //         ac.CellPos = CellPos;
-            //     }
-            // }
-
+            {
+                // if (_skillRunner.TryPlay(SkillType.Arrow))
+                // {
+                //     State = CState.Skill;
+                // 
+                //     // TODO
+                //     {
+                //         GameObject go = Managers.Resource.Instantiate("Creature/Arrow");
+                //         ArrowController ac = go.GetComponent<ArrowController>();
+                //         ac.Dir = _lastDir;
+                //         ac.CellPos = CellPos;
+                //     }
+                // }
+            }
+            // 화살 스킬
             C_Skill skill = new C_Skill()
             {
                 Info = new SkillInfo()

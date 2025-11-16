@@ -18,7 +18,7 @@ public class SkillRunner : MonoBehaviour
     MoveDir                                 _currentSkillDir = MoveDir.Down; // 마지막 스킬 방향
     MoveDir                                 _lastSkillDir = MoveDir.Down; // 마지막 스킬 방향
 
-    public SkillType                        CurrentType { get; set; } = SkillType.Sword;
+    public SkillType                        CurrentType { get; set; } = SkillType.SkillSword;
 
     public event Action                     OnSkillEnded;  // ← 종료 알림
     int                                     _castSerial = 0;
@@ -55,22 +55,19 @@ public class SkillRunner : MonoBehaviour
     {
         switch (type)
         {
-            case SkillType.Sword:
+            case SkillType.SkillSword:
                 {
                     bool ret = PlaySwordSkill();
                     if (ret == true)
                     {
                         ++_pressedCount;
-                        Debug.Log($"프레스 카운트 : {_pressedCount}");
+                        // Debug.Log($"프레스 카운트 : {_pressedCount}");
                     }
-
                     return ret;
                 }
                 break;
-            case SkillType.Arrow:
-                {
+            case SkillType.SkillProjectile:
                     return PlayArrowSkill();
-                }
                 break;
         }
 
@@ -149,7 +146,7 @@ public class SkillRunner : MonoBehaviour
     private bool PlaySwordSkill()
     {
         // Sword용 세트 하나 선택 (필요하면 인덱스를 상태/장비에 따라 바꾸세요)
-        if (!TryGetSet(SkillType.Sword, out var set))
+        if (!TryGetSet(SkillType.SkillSword, out var set))
             return false;
 
         // 현재 입력 순간의 방향 스냅샷
@@ -192,10 +189,10 @@ public class SkillRunner : MonoBehaviour
 
     private bool PlayArrowSkill()
     {
-        if (Time.time <= _lockUntil)
+        if (Time.time <= _lockUntil) // 아직 쿨 타임 이라면 return false;
             return false;
 
-        if (!TryGetSet(SkillType.Arrow, out var set))
+        if (!TryGetSet(SkillType.SkillProjectile, out var set))
             return false;
 
         // 현재 입력 순간의 방향 스냅샷
