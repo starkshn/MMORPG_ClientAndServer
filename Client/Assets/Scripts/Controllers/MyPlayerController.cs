@@ -6,6 +6,8 @@ using static Define;
 
 public class MyPlayerController : PlayerController
 {
+    bool _moveKeyPressed = false;
+
     protected override void Init()
     {
         base.Init();
@@ -29,12 +31,13 @@ public class MyPlayerController : PlayerController
     protected override void UpdateIdle()
     {
         // 이동 상태로 갈지 확인
-        if (Dir != MoveDir.None)
+        if (_moveKeyPressed == true)
         {
             State = CState.Moving;
             return;
         }
 
+        // MyCode
         if (_coSkillCooltime == null && Input.GetKeyDown(KeyCode.Space))
         {
             // 마지막 콤보인경우
@@ -43,12 +46,22 @@ public class MyPlayerController : PlayerController
                 CoInputCooltime(_skillRunner._comboUntil + 0.1f);
                 return;
             }
-            Debug.Log("Skill!");
+
+            Debug.Log("Skill Sword!");
 
             GetSkillInput();
 
             // 스킬 쿨 타임, 키 무한 입력 방지
             _coSkillCooltime = StartCoroutine("CoInputCooltime", 0.1f);
+        }
+        else if (_coSkillCooltime == null && Input.GetKeyDown(KeyCode.X))
+        {
+            Debug.Log("Skill Arrow!");
+
+            GetSkillInput();
+
+            // 스킬 쿨 타임, 키 무한 입력 방지
+            _coSkillCooltime = StartCoroutine("CoInputCooltime", 0.5f);
         }
     }
 
@@ -66,6 +79,8 @@ public class MyPlayerController : PlayerController
 
     void GetDirInput()
     {
+        _moveKeyPressed = true;
+
         if (Input.GetKey(KeyCode.W))
         {
             Dir = MoveDir.Up;
@@ -84,7 +99,7 @@ public class MyPlayerController : PlayerController
         }
         else
         {
-            Dir = MoveDir.None;
+            _moveKeyPressed = false;
         }
     }
 
@@ -119,12 +134,19 @@ public class MyPlayerController : PlayerController
             //         ac.CellPos = CellPos;
             //     }
             // }
+
+            C_Skill skill = new C_Skill()
+            {
+                Info = new SkillInfo()
+            };
+            skill.Info.SkillId = 2;
+            Managers.Network.Send(skill);
         }
     }
 
     protected override void MoveToNextPos()
     {
-        if (Dir == MoveDir.None)
+        if (_moveKeyPressed == false)
         {
             State = CState.Idle;
             CheckUpdatedFlag();

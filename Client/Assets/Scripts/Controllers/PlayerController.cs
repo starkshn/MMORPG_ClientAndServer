@@ -39,7 +39,7 @@ public class PlayerController : BaseController
 
                 var table = new Dictionary<SkillType, DirectionalSkillSet> { { SkillType.Sword, _swordSet } };
 
-                _skillRunner.Configure(table, () => _lastDir);
+                _skillRunner.Configure(table, () => Dir);
                 _skillRunner.CurrentType = SkillType.Sword;
 
                 _skillRunner.OnSkillStarted += (asset, dir) => PlayAttackDirectional(asset);
@@ -60,7 +60,7 @@ public class PlayerController : BaseController
                 var b1 = SetSkillAsset("ATTACK_ARROW_BACK", 0.5f, 0.5f);
                 _ArrowSet = new DirectionalSkillSet { _right = r1, _front = f1, _back = b1, _left = null };
                 var table = new Dictionary<SkillType, DirectionalSkillSet> { { SkillType.Arrow, _ArrowSet } };
-                _skillRunner.Configure(table, () => _lastDir);
+                _skillRunner.Configure(table, () => Dir);
 
                 _skillRunner.OnSkillStarted += (asset, dir) => PlayAttackDirectional(asset);
                 _skillRunner.OnSkillEnded += () =>
@@ -77,9 +77,12 @@ public class PlayerController : BaseController
 
     protected override void UpdateAnimation()
     {
+        if (_animator == null || _sprite == null)
+            return;
+
         if (State == CState.Idle)
         {
-            switch (_lastDir)
+            switch (Dir)
             {
                 case MoveDir.Up:
                     _animator.Play("IDLE_BACK");
@@ -119,8 +122,6 @@ public class PlayerController : BaseController
                     _animator.Play("WALK_RIGHT");
                     _sprite.flipX = false;
                     break;
-                case MoveDir.None:
-                    break;
             }
         }
         else if (State == CState.Skill)
@@ -136,23 +137,6 @@ public class PlayerController : BaseController
     protected override void UpdateController()
     {
         base.UpdateController();
-    }
-
-    void PlayAttackDirectional(SkillAsset asset)
-    {
-        _sprite.flipX = (_lastDir == MoveDir.Left);
-        if (!string.IsNullOrEmpty(asset._animName))
-            _animator.Play(asset._animName);
-    }
-
-    protected override void UpdateIdle()
-    {
-        // 이동 상태로 갈지 확인
-        if (Dir != MoveDir.None)
-        {
-            State = CState.Moving;
-            return;
-        }
     }
 
     public void UseSkill(int skillId)
@@ -172,5 +156,12 @@ public class PlayerController : BaseController
     protected virtual void CheckUpdatedFlag()
     {
 
+    }
+
+    void PlayAttackDirectional(SkillAsset asset)
+    {
+        _sprite.flipX = (Dir == MoveDir.Left);
+        if (!string.IsNullOrEmpty(asset._animName))
+            _animator.Play(asset._animName);
     }
 }

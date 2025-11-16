@@ -22,16 +22,16 @@ class PacketHandler
     public static void S_SpawnHandler(PacketSession session, IMessage packet)
     {
         S_Spawn spawnPacket = packet as S_Spawn;
-        foreach (PlayerInfo player in spawnPacket.Players)
+        foreach (ObjectInfo obj in spawnPacket.Objects)
         {
-            Managers.Obj.Add(player, myPlayer: false);
+            Managers.Obj.Add(obj, myPlayer: false);
         }
     }
 
     public static void S_DespawnHandler(PacketSession session, IMessage packet)
     {
         S_Despawn despawnPacket = packet as S_Despawn;
-        foreach (int id in despawnPacket.PlayerIds)
+        foreach (int id in despawnPacket.ObjectIds)
         {
             Managers.Obj.Remove(id);
         }
@@ -40,9 +40,8 @@ class PacketHandler
     public static void S_MoveHandler(PacketSession session, IMessage packet)
     {
         S_Move movePacket = packet as S_Move;
-        ServerSession serverSession = session as ServerSession;
 
-        GameObject go = Managers.Obj.FindById(movePacket.PlayerId);
+        GameObject go = Managers.Obj.FindById(movePacket.ObjectId);
         if (go == null)
             return;
 
@@ -57,7 +56,7 @@ class PacketHandler
     {
         S_Skill skillPacket = packet as S_Skill;
 
-        GameObject go = Managers.Obj.FindById(skillPacket.PlayerId);
+        GameObject go = Managers.Obj.FindById(skillPacket.ObjectId);
         if (go == null)
             return;
 
@@ -67,5 +66,4 @@ class PacketHandler
             pc.UseSkill(skillPacket.Info.SkillId);
         }
     }
-
 }

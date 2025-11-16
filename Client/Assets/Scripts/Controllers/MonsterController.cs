@@ -54,7 +54,7 @@ public class MonsterController : BaseController
         base.Init();
 
         State = CState.Idle;
-        Dir = MoveDir.None;
+        Dir = MoveDir.Down;
 
         _skillRunner = gameObject.AddComponent<SkillRunner>();
 
@@ -66,7 +66,7 @@ public class MonsterController : BaseController
 
             var table = new Dictionary<SkillType, DirectionalSkillSet> { { SkillType.Sword, _swordSet } };
 
-            _skillRunner.Configure(table, () => _lastDir);
+            _skillRunner.Configure(table, () => Dir);
             _skillRunner.CurrentType = SkillType.Sword;
 
             _skillRunner.OnSkillStarted += (asset, dir) => PlayAttackDirectional(asset);
@@ -79,7 +79,7 @@ public class MonsterController : BaseController
 
     void PlayAttackDirectional(SkillAsset asset)
     {
-        _sprite.flipX = (_lastDir == MoveDir.Left);
+        _sprite.flipX = (Dir == MoveDir.Left);
         if (!string.IsNullOrEmpty(asset._animName))
             _animator.Play(asset._animName);
     }
@@ -121,7 +121,6 @@ public class MonsterController : BaseController
         {
             _target = null;
             State = CState.Idle;
-            Dir = MoveDir.None;
             return;
         }
 
@@ -136,8 +135,6 @@ public class MonsterController : BaseController
             Dir = MoveDir.Up;
         else if (moveCellDir.y < 0)
             Dir = MoveDir.Down;
-        else
-            Dir = MoveDir.None;
 
         if (Managers.Map.CanGo(nextPos) && Managers.Obj.Find(nextPos) == null)
         {
@@ -146,7 +143,6 @@ public class MonsterController : BaseController
         else
         {
             State = CState.Idle;
-            Dir = MoveDir.None;
         }
     }
 

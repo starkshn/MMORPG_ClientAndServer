@@ -66,7 +66,7 @@ public abstract class BaseAI
     protected bool TryStep(Vector3Int self, Vector3Int dest, bool hasTarget, out Vector3Int next, out MoveDir dir)
     {
         next = self;
-        dir = MoveDir.None;
+        dir = MoveDir.Down;
 
         _path = _pf.FindPath(self, dest, ignoreDestCollision: true);
         if (_path == null || _path.Count < 2) 
@@ -89,6 +89,6 @@ public abstract class BaseAI
         if (d.x < 0) return MoveDir.Left;
         if (d.y > 0) return MoveDir.Up;
         if (d.y < 0) return MoveDir.Down;
-        return MoveDir.None;
+        return MoveDir.Down;
     }
 }

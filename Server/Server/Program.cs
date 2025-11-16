@@ -1,4 +1,4 @@
-﻿using Server.Game;
+﻿using Server.Game.Room;
 using ServerCore;
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ namespace Server
 
 		static void Main(string[] args)
 		{
-			RoomManager.Instance.Add();
+			RoomManager.Instance.Add(1);
 
 			// DNS (Domain Name System)
 			string host = Dns.GetHostName();
@@ -37,7 +37,9 @@ namespace Server
 
 			while (true)
 			{
-				JobTimer.Instance.Flush();
+				// JobTimer.Instance.Flush();
+				RoomManager.Instance.Find(1).Update();
+				Thread.Sleep(100);
 			}
 		}
 	}

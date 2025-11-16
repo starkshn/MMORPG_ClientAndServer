@@ -27,8 +27,13 @@ public class BaseController : MonoBehaviour
             CellPos = new Vector3Int(value.PosX, value.PosY, 0);
             State = value.State;
             Dir = value.MoveDir;
-            _positionInfo = value;
         }
+    }
+
+    public void SyncPos()
+    {
+        Vector3 destPos = Managers.Map.CurrentGrid.CellToWorld(CellPos) + new Vector3(0.5f, 0.5f);
+        transform.position = destPos;
     }
 
     public Vector3Int CellPos
@@ -65,7 +70,6 @@ public class BaseController : MonoBehaviour
         }
     }
 
-    protected MoveDir   _lastDir = MoveDir.Down;
     public MoveDir Dir
     {
         get { return PosInfo.MoveDir; }
@@ -75,8 +79,6 @@ public class BaseController : MonoBehaviour
                 return;
 
             PosInfo.MoveDir = value;
-            if (value != MoveDir.None)
-                _lastDir = value;
 
             UpdateAnimation();
             _updated = true;
@@ -87,7 +89,7 @@ public class BaseController : MonoBehaviour
     { 
         Vector3Int cellPos = CellPos; 
         
-        switch(_lastDir)
+        switch (Dir)
         {
             case MoveDir.Up:
                 cellPos += Vector3Int.up;
@@ -114,17 +116,18 @@ public class BaseController : MonoBehaviour
             return MoveDir.Left;
         else if (dir.y > 0)
             return MoveDir.Up;
-        else if (dir.y < 0)
-            return MoveDir.Down;
         else
-            return MoveDir.None;
+            return MoveDir.Down;
     }
 
     protected virtual void UpdateAnimation()
     {
+        if (_animator == null || _sprite == null)
+            return;
+
         if (State == CState.Idle)
         {
-            switch (_lastDir)
+            switch (Dir)
             {
                 case MoveDir.Up:
                     _animator.Play("IDLE_BACK");
@@ -164,8 +167,6 @@ public class BaseController : MonoBehaviour
                     _animator.Play("WALK_RIGHT");
                     _sprite.flipX = false;
                     break;
-                case MoveDir.None:
-                    break;
             }
         }
         else if (State == CState.Skill)
@@ -189,12 +190,6 @@ public class BaseController : MonoBehaviour
         UpdateController();
     }
 
-    public void SyncPos()
-    {
-        Vector3 destPos = Managers.Map.CurrentGrid.CellToWorld(CellPos) + new Vector3(0.5f, 0.5f);
-        transform.position = destPos;
-    }
-
     protected virtual void Init()
     {
         _animator = GetComponent<Animator>();
@@ -203,7 +198,7 @@ public class BaseController : MonoBehaviour
         transform.position = worldPos;
 
         State = CState.Idle;
-        Dir = MoveDir.None;
+        Dir = MoveDir.Down;
         UpdateAnimation();
     }
 
@@ -228,36 +223,7 @@ public class BaseController : MonoBehaviour
 
     protected virtual void UpdateIdle()
     {
-        if (State == CState.Idle && Dir != MoveDir.None)
-        {
-            Vector3Int destPos = CellPos;
-
-            switch (Dir)
-            {
-                case MoveDir.Up:
-                    destPos += Vector3Int.up;
-                    break;
-                case MoveDir.Down:
-                    destPos += Vector3Int.down;
-                    break;
-                case MoveDir.Left:
-                    destPos += Vector3Int.left;
-                    break;
-                case MoveDir.Right:
-                    destPos += Vector3Int.right;
-                    break;
-            }
-
-            bool canAdvance = Managers.Map.CanGo(destPos) && Managers.Obj.Find(destPos) == null;
-
-            if (canAdvance)
-                State = CState.Moving;
-            else
-            {
-                State = CState.Idle;
-                Dir = MoveDir.None;
-            }
-        }
+        
     }
 
     protected virtual void UpdateMoving()
