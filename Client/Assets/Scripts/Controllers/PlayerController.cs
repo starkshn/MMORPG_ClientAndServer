@@ -73,6 +73,8 @@ public class PlayerController : BaseController
                 };
             }
         }
+
+        AddHpBar();
     }
 
     protected override void UpdateAnimation()
@@ -127,6 +129,28 @@ public class PlayerController : BaseController
         else if (State == CState.Skill)
         {
 
+        }
+        else if (State == CState.Hit)
+        {
+            switch(Dir)
+            {
+                case MoveDir.Up:
+                    _animator.Play("HIT_BACK");
+                    _sprite.flipX = false;
+                    break;
+                case MoveDir.Down:
+                    _animator.Play("HIT_FRONT");
+                    _sprite.flipX = false;
+                    break;
+                case MoveDir.Left:
+                    _animator.Play("HIT_RIGHT");
+                    _sprite.flipX = true;
+                    break;
+                case MoveDir.Right:
+                    _animator.Play("HIT_RIGHT");
+                    _sprite.flipX = false;
+                    break;
+            }
         }
         else if (State == CState.Dead)
         {

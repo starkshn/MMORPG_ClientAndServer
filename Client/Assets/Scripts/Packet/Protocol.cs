@@ -46,13 +46,13 @@ namespace Google.Protobuf.Protocol {
             "Cgdza2lsbElkGAEgASgFKooBCgVNc2dJZBIQCgxTX0VOVEVSX0dBTUUQABIQ",
             "CgxTX0xFQVZFX0dBTUUQARILCgdTX1NQQVdOEAISDQoJU19ERVNQQVdOEAMS",
             "CgoGQ19NT1ZFEAQSCgoGU19NT1ZFEAUSCwoHQ19TS0lMTBAGEgsKB1NfU0tJ",
-            "TEwQBxIPCgtTX0NIQU5HRV9IUBAIKjMKBkNTdGF0ZRIICgRJRExFEAASCgoG",
-            "TU9WSU5HEAESCQoFU0tJTEwQAhIICgRERUFEEAMqMAoHTW92ZURpchIGCgJV",
-            "UBAAEggKBERPV04QARIICgRMRUZUEAISCQoFUklHSFQQAypDCg5HYW1lT2Jq",
-            "ZWN0VHlwZRIICgROT05FEAASCgoGUExBWUVSEAESCwoHTU9OU1RFUhACEg4K",
-            "ClBST0pFQ1RJTEUQAypCCglTa2lsbFR5cGUSDgoKU0tJTExfTk9ORRAAEg8K",
-            "C1NLSUxMX1NXT1JEEAESFAoQU0tJTExfUFJPSkVDVElMRRACQhuqAhhHb29n",
-            "bGUuUHJvdG9idWYuUHJvdG9jb2xiBnByb3RvMw=="));
+            "TEwQBxIPCgtTX0NIQU5HRV9IUBAIKjwKBkNTdGF0ZRIICgRJRExFEAASCgoG",
+            "TU9WSU5HEAESCQoFU0tJTEwQAhIHCgNISVQQAxIICgRERUFEEAQqMAoHTW92",
+            "ZURpchIGCgJVUBAAEggKBERPV04QARIICgRMRUZUEAISCQoFUklHSFQQAypD",
+            "Cg5HYW1lT2JqZWN0VHlwZRIICgROT05FEAASCgoGUExBWUVSEAESCwoHTU9O",
+            "U1RFUhACEg4KClBST0pFQ1RJTEUQAypCCglTa2lsbFR5cGUSDgoKU0tJTExf",
+            "Tk9ORRAAEg8KC1NLSUxMX1NXT1JEEAESFAoQU0tJTExfUFJPSkVDVElMRRAC",
+            "QhuqAhhHb29nbGUuUHJvdG9idWYuUHJvdG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.MsgId), typeof(global::Google.Protobuf.Protocol.CState), typeof(global::Google.Protobuf.Protocol.MoveDir), typeof(global::Google.Protobuf.Protocol.GameObjectType), typeof(global::Google.Protobuf.Protocol.SkillType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -91,7 +91,8 @@ namespace Google.Protobuf.Protocol {
     [pbr::OriginalName("IDLE")] Idle = 0,
     [pbr::OriginalName("MOVING")] Moving = 1,
     [pbr::OriginalName("SKILL")] Skill = 2,
-    [pbr::OriginalName("DEAD")] Dead = 3,
+    [pbr::OriginalName("HIT")] Hit = 3,
+    [pbr::OriginalName("DEAD")] Dead = 4,
   }
 
   public enum MoveDir {

@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.Protocol;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,8 @@ using UnityEngine;
 
 public class BaseController : MonoBehaviour
 {
+    HpBar _hpBar;
+
     public int Id { get; set; }
 
     StatInfo _stat = new StatInfo();
@@ -20,6 +23,7 @@ public class BaseController : MonoBehaviour
             _stat.Hp = value.Hp;
             _stat.MaxHp = value.MaxHp;
             _stat.Speed = value.Speed;
+            UpdateHpBar();
         }
     }
 
@@ -27,6 +31,16 @@ public class BaseController : MonoBehaviour
     {
         get { return Stat.Speed; }
         set { Stat.Speed = value; }
+    }
+
+    public int Hp
+    {
+        get { return Stat.Hp; }
+        set
+        {
+            Stat.Hp = value;
+            UpdateHpBar();
+        }
     }
 
     protected bool              _updated = false;
@@ -233,6 +247,9 @@ public class BaseController : MonoBehaviour
             case CState.Skill:
                 UpdateSkill();
                 break;
+            case CState.Hit:
+                UpdateHit();
+                break;
             case CState.Dead:
                 UpdateDead();
                 break;
@@ -263,6 +280,27 @@ public class BaseController : MonoBehaviour
             transform.position += moveDir.normalized * Speed * Time.deltaTime;
             State = CState.Moving;
         }
+    }
+
+    protected virtual void UpdateHit()
+    {
+        if (_coHit != null)
+            return;
+
+        _coHit = StartCoroutine(CoHitRoutine());
+    }
+
+    Coroutine _coHit;
+
+    IEnumerator CoHitRoutine()
+    {
+        _animator.Play("HIT");
+
+        // 0.2초 동안 Hit 애니 유지
+        yield return new WaitForSeconds(0.2f);
+
+        State = CState.Idle;
+        _coHit = null;
     }
 
     protected virtual void MoveToNextPos()
@@ -297,4 +335,28 @@ public class BaseController : MonoBehaviour
     }
     
     #endregion
+
+    protected void AddHpBar()
+    {
+        GameObject go = Managers.Resource.Instantiate("UI/HpBar", transform);
+        go.transform.localPosition = new Vector3(0, 1.0f, 0f);
+        go.name = "HpBar";
+        _hpBar = go.GetComponent<HpBar>();
+        UpdateHpBar();
+    }
+
+    void UpdateHpBar()
+    {
+        if (_hpBar == null)
+            return;
+
+        float ratio = 0.0f;
+        if (Stat.MaxHp > 0)
+        {
+            // float 가 우선순위가 높다
+            ratio = ((float)Hp / Stat.MaxHp);
+        }
+
+        _hpBar.SetHpBar(ratio);
+    }
 }

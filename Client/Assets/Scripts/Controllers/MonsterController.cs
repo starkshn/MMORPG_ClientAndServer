@@ -74,6 +74,8 @@ public class MonsterController : BaseController
                 if (State == CState.Skill) State = CState.Idle;
             };
         }
+
+        AddHpBar();
     }
 
     void PlayAttackDirectional(SkillAsset asset)

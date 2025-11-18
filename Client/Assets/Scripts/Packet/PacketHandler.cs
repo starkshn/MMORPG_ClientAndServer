@@ -79,12 +79,11 @@ class PacketHandler
         BaseController bc = go.GetComponent<BaseController>();
         if (bc != null)
         {
-            bc.Stat.Hp = changePacket.Hp;
-
+            bc.Hp = changePacket.Hp;
+            bc.State = CState.Hit;
             // TODO : UI
 
             Debug.Log($"Change HP : {changePacket.Hp}");
         }
     }
-    
 }

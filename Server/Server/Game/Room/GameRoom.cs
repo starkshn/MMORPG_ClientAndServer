@@ -5,6 +5,7 @@ using Server.Game.Object;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Numerics;
 using System.Text;
 
 namespace Server.Game.Room
@@ -45,6 +46,9 @@ namespace Server.Game.Room
 
             lock (_lock)
             {
+                Vector2Int pos = new Vector2Int(gameObject.Info.PosInfo.PosX, gameObject.Info.PosInfo.PosY);
+                Map.ApplyMove(gameObject, pos);
+
                 if (type == GameObjectType.Player)
                 {
                     Player player = gameObject as Player;
@@ -208,6 +212,7 @@ namespace Server.Game.Room
                             if (target != null)
                             {
                                 Console.WriteLine("Hit GameObject !");
+                                target.OnDamaged(player, info.StatInfo.Attack);
                             }
                         }
                         break;

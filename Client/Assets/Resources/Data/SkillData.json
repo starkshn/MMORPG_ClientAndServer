@@ -15,7 +15,7 @@
       "skillType": "SkillProjectile",
       "projectile": {
         "name": "Arrow",
-        "speed": "20.0",
+        "speed": "5.0",
         "range": "10",
         "prefab": "Creature/Arrow"
       }
