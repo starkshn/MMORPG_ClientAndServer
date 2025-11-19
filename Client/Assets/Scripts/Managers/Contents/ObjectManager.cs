@@ -57,8 +57,12 @@ public class ObjectManager : MonoBehaviour
             _objs.Add(info.ObjectId, go);
             
             ArrowController ac = go.GetComponent<ArrowController>();
-            ac.Dir = info.PosInfo.MoveDir;
-            ac.CellPos = new Vector3Int(info.PosInfo.PosX, info.PosInfo.PosY, 0);
+            // ac.Dir = info.PosInfo.MoveDir;
+            // ac.CellPos = new Vector3Int(info.PosInfo.PosX, info.PosInfo.PosY, 0);
+            // ac.Stat = info.StatInfo;
+            // ac.SyncPos();
+
+            ac.PosInfo = info.PosInfo;
             ac.Stat = info.StatInfo;
             ac.SyncPos();
         }
@@ -74,15 +78,6 @@ public class ObjectManager : MonoBehaviour
         Managers.Resource.Destroy(go);
     }
 
-    public void RemoveMyPlayer()
-    {
-        if (MyPlayer == null)
-            return;
-
-        Remove(MyPlayer.Id);
-        MyPlayer = null;
-    }
-
     public GameObject FindById(int id)
     {
         GameObject go = null;
@@ -90,11 +85,11 @@ public class ObjectManager : MonoBehaviour
         return go;
     }
 
-    public GameObject Find(Vector3Int cellPos)
+    public GameObject FindCreature(Vector3Int cellPos)
     {
         foreach (GameObject obj in _objs.Values)
         {
-            BaseController cc = obj.GetComponent<BaseController>();
+            CController cc = obj.GetComponent<CController>();
             if (cc == null)
                 continue;
 
@@ -121,5 +116,6 @@ public class ObjectManager : MonoBehaviour
         foreach (GameObject obj in _objs.Values)
             Managers.Resource.Destroy(obj);
         _objs.Clear();
+        MyPlayer = null;
     }
 }

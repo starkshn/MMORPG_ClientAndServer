@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using static Define;
 
-public class MonsterController : BaseController
+public class MonsterController : CController
 {
     SkillRunner                 _skillRunner;
     DirectionalSkillSet         _swordSet;
@@ -137,7 +137,7 @@ public class MonsterController : BaseController
         else if (moveCellDir.y < 0)
             Dir = MoveDir.Down;
 
-        if (Managers.Map.CanGo(nextPos) && Managers.Obj.Find(nextPos) == null)
+        if (Managers.Map.CanGo(nextPos) && Managers.Obj.FindCreature(nextPos) == null)
         {
             CellPos = nextPos;
         }
@@ -185,7 +185,7 @@ public class MonsterController : BaseController
             int yRange = Random.Range(-5, 6);
             Vector3Int randPos = CellPos + new Vector3Int(xRange, yRange, 0);
 
-            if (Managers.Map.CanGo(randPos) && Managers.Obj.Find(randPos) == null)
+            if (Managers.Map.CanGo(randPos) && Managers.Obj.FindCreature(randPos) == null)
             {
                 _destCellPos = randPos;
                 State = CState.Moving;

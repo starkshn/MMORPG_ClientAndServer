@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Define;
 
-public class PlayerController : BaseController
+public class PlayerController : CController
 {
     protected SkillRunner           _skillRunner;
     DirectionalSkillSet             _swordSet;
@@ -73,8 +73,6 @@ public class PlayerController : BaseController
                 };
             }
         }
-
-        AddHpBar();
     }
 
     protected override void UpdateAnimation()

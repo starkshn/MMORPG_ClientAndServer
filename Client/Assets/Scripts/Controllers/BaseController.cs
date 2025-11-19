@@ -7,12 +7,10 @@ using UnityEngine;
 
 public class BaseController : MonoBehaviour
 {
-    HpBar _hpBar;
-
     public int Id { get; set; }
 
     StatInfo _stat = new StatInfo();
-    public StatInfo Stat
+    public virtual StatInfo Stat
     {
         get { return _stat; }
         set
@@ -23,7 +21,6 @@ public class BaseController : MonoBehaviour
             _stat.Hp = value.Hp;
             _stat.MaxHp = value.MaxHp;
             _stat.Speed = value.Speed;
-            UpdateHpBar();
         }
     }
 
@@ -33,13 +30,12 @@ public class BaseController : MonoBehaviour
         set { Stat.Speed = value; }
     }
 
-    public int Hp
+    public virtual int Hp
     {
         get { return Stat.Hp; }
         set
         {
             Stat.Hp = value;
-            UpdateHpBar();
         }
     }
 
@@ -208,6 +204,7 @@ public class BaseController : MonoBehaviour
         else if (State == CState.Dead)
         {
             _animator.Play("DEAD");
+            _sprite.flipX = false;
         }
     }
 
@@ -284,24 +281,9 @@ public class BaseController : MonoBehaviour
 
     protected virtual void UpdateHit()
     {
-        if (_coHit != null)
-            return;
-
-        _coHit = StartCoroutine(CoHitRoutine());
+        
     }
 
-    Coroutine _coHit;
-
-    IEnumerator CoHitRoutine()
-    {
-        _animator.Play("HIT");
-
-        // 0.2초 동안 Hit 애니 유지
-        yield return new WaitForSeconds(0.2f);
-
-        State = CState.Idle;
-        _coHit = null;
-    }
 
     protected virtual void MoveToNextPos()
     {
@@ -336,27 +318,5 @@ public class BaseController : MonoBehaviour
     
     #endregion
 
-    protected void AddHpBar()
-    {
-        GameObject go = Managers.Resource.Instantiate("UI/HpBar", transform);
-        go.transform.localPosition = new Vector3(0, 1.0f, 0f);
-        go.name = "HpBar";
-        _hpBar = go.GetComponent<HpBar>();
-        UpdateHpBar();
-    }
 
-    void UpdateHpBar()
-    {
-        if (_hpBar == null)
-            return;
-
-        float ratio = 0.0f;
-        if (Stat.MaxHp > 0)
-        {
-            // float 가 우선순위가 높다
-            ratio = ((float)Hp / Stat.MaxHp);
-        }
-
-        _hpBar.SetHpBar(ratio);
-    }
 }

@@ -1,14 +1,14 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
+using Newtonsoft.Json.Serialization;
 using Server.Data;
 using Server.Game.Object;
+using Server.Game.Room;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Numerics;
 using System.Text;
 
-namespace Server.Game.Room
+namespace Server.Game
 {
     public class GameRoom
     {
@@ -30,9 +30,9 @@ namespace Server.Game.Room
         {
             lock (_lock)
             {
-                foreach(Projectile proj in _projectiles.Values)
+                foreach (Projectile projectile in _projectiles.Values)
                 {
-                    proj.Update();
+                    projectile.Update();
                 }
             }
         }
@@ -46,14 +46,13 @@ namespace Server.Game.Room
 
             lock (_lock)
             {
-                Vector2Int pos = new Vector2Int(gameObject.Info.PosInfo.PosX, gameObject.Info.PosInfo.PosY);
-                Map.ApplyMove(gameObject, pos);
-
                 if (type == GameObjectType.Player)
                 {
                     Player player = gameObject as Player;
                     _players.Add(gameObject.Id, player);
                     player.Room = this;
+
+                    Map.ApplyMove(player, new Vector2Int(player.CellPos.x, player.CellPos.y));
 
                     // 본인한테 정보 전송
                     {
@@ -67,6 +66,13 @@ namespace Server.Game.Room
                             if (player != p)
                                 spawnPacket.Objects.Add(p.Info);
                         }
+
+                        foreach (Monster m in _monsters.Values)
+                            spawnPacket.Objects.Add(m.Info);
+
+                        foreach (Projectile p in _projectiles.Values)
+                            spawnPacket.Objects.Add(p.Info);
+
                         player.Session.Send(spawnPacket);
                     }
                 }
@@ -75,15 +81,17 @@ namespace Server.Game.Room
                     Monster monster = gameObject as Monster;
                     _monsters.Add(gameObject.Id, monster);
                     monster.Room = this;
+
+                    Map.ApplyMove(monster, new Vector2Int(monster.CellPos.x, monster.CellPos.y));
                 }
                 else if (type == GameObjectType.Projectile)
                 {
-                    Projectile proj = gameObject as Projectile;
-                    _projectiles.Add(gameObject.Id, proj);
-                    proj.Room = this;
+                    Projectile projectile = gameObject as Projectile;
+                    _projectiles.Add(gameObject.Id, projectile);
+                    projectile.Room = this;
                 }
 
-                // 타인 한테 정보 전송
+                // 타인한테 정보 전송
                 {
                     S_Spawn spawnPacket = new S_Spawn();
                     spawnPacket.Objects.Add(gameObject.Info);
@@ -92,6 +100,9 @@ namespace Server.Game.Room
                         if (p.Id != gameObject.Id)
                         {
                             p.Session.Send(spawnPacket);
+
+                            // 꼭 추가를 해야한다.
+                            Map.ApplyMove(p, new Vector2Int(p.CellPos.x, p.CellPos.y));
                         }
                     }
                 }
@@ -101,8 +112,8 @@ namespace Server.Game.Room
         public void LeaveGame(int objectId)
         {
             GameObjectType type = ObjectManager.GetObjectTypeById(objectId);
-            
-            lock(_lock)
+
+            lock (_lock)
             {
                 if (type == GameObjectType.Player)
                 {
@@ -212,11 +223,11 @@ namespace Server.Game.Room
                             if (target != null)
                             {
                                 Console.WriteLine("Hit GameObject !");
-                                target.OnDamaged(player, info.StatInfo.Attack);
+
+                                target.OnDamaged(player, player.Stat.Attack);
                             }
                         }
                         break;
-
                     case SkillType.SkillProjectile:
                         {
                             Arrow arrow = ObjectManager.Instance.Add<Arrow>();
@@ -246,6 +257,11 @@ namespace Server.Game.Room
                     p.Session.Send(packet);
                 }
             }
+        }
+
+        public void PushAfter(float delayTime, Action func)
+        {
+            
         }
     }
 }

@@ -16,7 +16,7 @@ class PacketHandler
     public static void S_LeaveGameHandler(PacketSession session, IMessage packet)
     {
         S_LeaveGame leaveGameHandler = packet as S_LeaveGame;
-        Managers.Obj.RemoveMyPlayer();
+        Managers.Obj.Clear();
     }
 
     public static void S_SpawnHandler(PacketSession session, IMessage packet)
@@ -76,14 +76,29 @@ class PacketHandler
         if (go == null)
             return;
 
-        BaseController bc = go.GetComponent<BaseController>();
-        if (bc != null)
+        CController cc = go.GetComponent<CController>();
+        if (cc != null)
         {
-            bc.Hp = changePacket.Hp;
-            bc.State = CState.Hit;
-            // TODO : UI
+            cc.Hp = changePacket.Hp;
+            cc.State = CState.Hit;
 
             Debug.Log($"Change HP : {changePacket.Hp}");
+        }
+    }
+
+    public static void S_DeadHandler(PacketSession session, IMessage packet)
+    {
+        S_Dead deadPacket = packet as S_Dead;
+
+        GameObject go = Managers.Obj.FindById(deadPacket.ObjectId);
+        if (go == null)
+            return;
+
+        CController cc = go.GetComponent<CController>();
+        if (cc != null)
+        {
+            cc.Hp = 0;
+            cc.OnDead();
         }
     }
 }

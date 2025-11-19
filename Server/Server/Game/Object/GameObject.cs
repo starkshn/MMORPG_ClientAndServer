@@ -83,6 +83,7 @@ namespace Server.Game.Object
             changePacket.Hp = Stat.Hp;
             changePacket.Damage = damage;
             Room.Broadcast(changePacket);
+
             if (Stat.Hp <= 0)
             {
                 OnDead(attacker);
@@ -92,6 +93,30 @@ namespace Server.Game.Object
         public virtual void OnDead(GameObject attacker)
         {
             Console.WriteLine($"Dead By {attacker.Info.Name}");
+
+            // 1. 클라에게 player 죽음을 알림
+            S_Dead deadPacket = new S_Dead();
+            deadPacket.ObjectId = Id;
+            deadPacket.AttackerId = attacker.Id;
+            Room.Broadcast(deadPacket);
+
+            GameRoom room = Room;
+            JobTimer.Instance.Push(() =>
+            {
+                // if (Room != room)
+                //     return;
+
+                // 여기서 완전 제거 후 다시 입장시키는 패턴
+                room.LeaveGame(Id);
+
+                Stat.Hp = Stat.MaxHp;
+                PosInfo.State = CState.Idle;
+                PosInfo.MoveDir = MoveDir.Down;
+                PosInfo.PosX = 0;
+                PosInfo.PosY = 0;
+
+                room.EnterGame(this);
+            }, 600);
         }
     }
 }

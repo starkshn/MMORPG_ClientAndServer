@@ -41,7 +41,7 @@ namespace Server
 
 			while (true)
 			{
-				// JobTimer.Instance.Flush();
+				JobTimer.Instance.Flush();
 				RoomManager.Instance.Find(1).Update();
 				// Thread.Sleep(100);
 			}
