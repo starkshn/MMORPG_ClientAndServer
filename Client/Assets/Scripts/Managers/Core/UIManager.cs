@@ -37,7 +37,8 @@ public class UIManager
         }
     }
 
-	public T MakeWorldSpaceUI<T>(Transform parent = null, string name = null) where T : UI_Base
+    // 월드 공간에 떠 있는 UI 생성 (HP Bar 같은 것)
+    public T MakeWorldSpaceUI<T>(Transform parent = null, string name = null) where T : UI_Base
 	{
 		if (string.IsNullOrEmpty(name))
 			name = typeof(T).Name;

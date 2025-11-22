@@ -6,11 +6,11 @@ namespace Server
 {
 	class SessionManager
 	{
-		static SessionManager _session = new SessionManager();
-		public static SessionManager Instance { get { return _session; } }
+		static SessionManager			_session = new SessionManager();
+		public static SessionManager	Instance { get { return _session; } }
 
-		int _sessionId = 0;
-		Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
+		int								_sessionId = 0;
+		Dictionary<int, ClientSession>	_sessions = new Dictionary<int, ClientSession>();
 		object _lock = new object();
 
 		public ClientSession Generate()

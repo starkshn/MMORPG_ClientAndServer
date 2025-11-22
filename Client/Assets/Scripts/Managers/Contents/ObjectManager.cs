@@ -1,7 +1,9 @@
-﻿using Google.Protobuf.Protocol;
+﻿using Google.Protobuf;
+using Google.Protobuf.Protocol;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using System.Xml.Linq;
 using UnityEngine;
 
@@ -48,7 +50,15 @@ public class ObjectManager : MonoBehaviour
         }
         else if (objectType == GameObjectType.Monster)
         {
-
+            GameObject go = Managers.Resource.Instantiate("Creature/Monster_Skeleton_Swordman");
+            go.name = info.Name;
+            _objs.Add(info.ObjectId, go);
+            
+            MonsterController mc = go.GetComponent<MonsterController>();
+            mc.Id = info.ObjectId;
+            mc.PosInfo = info.PosInfo;
+            mc.Stat = info.StatInfo;
+            mc.SyncPos();
         }
         else if (objectType == GameObjectType.Projectile)
         {
@@ -57,11 +67,6 @@ public class ObjectManager : MonoBehaviour
             _objs.Add(info.ObjectId, go);
             
             ArrowController ac = go.GetComponent<ArrowController>();
-            // ac.Dir = info.PosInfo.MoveDir;
-            // ac.CellPos = new Vector3Int(info.PosInfo.PosX, info.PosInfo.PosY, 0);
-            // ac.Stat = info.StatInfo;
-            // ac.SyncPos();
-
             ac.PosInfo = info.PosInfo;
             ac.Stat = info.StatInfo;
             ac.SyncPos();

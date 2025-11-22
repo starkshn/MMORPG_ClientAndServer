@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf.Protocol;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using static Define;
 
@@ -9,6 +10,8 @@ public class PlayerController : CController
     protected SkillRunner           _skillRunner;
     DirectionalSkillSet             _swordSet;
     DirectionalSkillSet             _ArrowSet;
+    public EmoteController          _emoteController;
+    public ChattingController       _chattingController;
 
     protected override void Init()
     {
@@ -72,6 +75,16 @@ public class PlayerController : CController
                     }
                 };
             }
+        }
+
+        // Emote
+        {
+            AddEmote();
+        }
+        
+        // Chatting
+        {
+            AddChatting();
         }
     }
 
@@ -161,7 +174,7 @@ public class PlayerController : CController
         base.UpdateController();
     }
 
-    public void UseSkill(int skillId)
+    public override void UseSkill(int skillId)
     {
         if (skillId == 1)
         {
@@ -193,5 +206,19 @@ public class PlayerController : CController
         _sprite.flipX = (Dir == MoveDir.Left);
         if (!string.IsNullOrEmpty(asset._animName))
             _animator.Play(asset._animName);
+    }
+
+    void AddEmote()
+    {
+        GameObject emote = Managers.Resource.Instantiate("UI/EmoteRoot", transform);
+        emote.SetActive(true); // 이거 해줘야 Awake/Start 호출됨
+        _emoteController = emote.GetComponent<EmoteController>();
+    }
+
+    void AddChatting()
+    {
+        GameObject chat = Managers.Resource.Instantiate("UI/ChatUIRoot", transform);
+        chat.SetActive(false);
+        _chattingController = chat.GetComponent<ChattingController>();
     }
 }

@@ -45,4 +45,23 @@ class PacketHandler
 
         room.HandleSkill(player, skillPacket);
     }
+
+    public static void C_EmoteHandler(PacketSession session, IMessage packet)
+    {
+        C_Emote emotePacket = packet as C_Emote;
+        ClientSession clientSession = session as ClientSession;
+
+        Player player = clientSession.MyPlayer;
+        if (player == null)
+            return;
+
+        GameRoom room = player.Room;
+        if (room == null)
+            return;
+
+        S_Emote resEmotePacket = new S_Emote();
+        resEmotePacket.ObjectId = emotePacket.ObjectId;
+        resEmotePacket.EmoteId = emotePacket.EmoteId;
+        room.Broadcast(resEmotePacket);
+    }
 }

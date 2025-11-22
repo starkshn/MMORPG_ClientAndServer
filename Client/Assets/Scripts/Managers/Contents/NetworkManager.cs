@@ -17,17 +17,29 @@ public class NetworkManager
 
 	public void Init()
 	{
+		{
+            // 예: 서버 집의 공인 IP
+            //string serverIp = "123.45.67.89"; // 실제로는 ipconfig / whatismyip 등으로 확인
+
+            //IPAddress ipAddr = IPAddress.Parse(serverIp);
+            //IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
+
+            //Connector connector = new Connector();
+            //connector.Connect(endPoint,
+            //    () => { return _session; },
+            //    1);
+        }
+
 		// DNS (Domain Name System)
 		string host = Dns.GetHostName();
 		IPHostEntry ipHost = Dns.GetHostEntry(host);
-		IPAddress ipAddr = ipHost.AddressList[0];
-		IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
+		// IPAddress ipAddr = ipHost.AddressList[0];
+        IPAddress ipAddr = IPAddress.Loopback; // 127.0.0.1
+        IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
 		Connector connector = new Connector();
 
-		connector.Connect(endPoint,
-			() => { return _session; },
-			1);
+		connector.Connect(endPoint, () => { return _session; }, 1);
 	}
 
 	public void Update()

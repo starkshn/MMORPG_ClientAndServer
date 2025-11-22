@@ -32,8 +32,7 @@ public class MultiplayersBuildAndRun
 
     static void PerformWin64Build(int playerCount)
     {
-        EditorUserBuildSettings.SwitchActiveBuildTarget
-            (BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows);
+        EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows);
 
         for (int i = 1; i <= playerCount; i++)
         {

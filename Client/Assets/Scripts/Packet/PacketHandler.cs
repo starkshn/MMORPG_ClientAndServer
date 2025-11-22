@@ -60,7 +60,7 @@ class PacketHandler
         if (go == null)
             return;
 
-        PlayerController pc = go.GetComponent<PlayerController>();
+        CController pc = go.GetComponent<CController>();
         if (pc != null)
         {
             pc.UseSkill(skillPacket.Info.SkillId);
@@ -100,5 +100,18 @@ class PacketHandler
             cc.Hp = 0;
             cc.OnDead();
         }
+    }
+
+    public static void S_EmoteHandler(PacketSession session, IMessage packet)
+    {
+        S_Emote emotePacket = packet as S_Emote;
+        GameObject go = Managers.Obj.FindById(emotePacket.ObjectId);
+        PlayerController pc = go.GetComponent<PlayerController>();
+        
+        if (pc._emoteController == null)
+            return;
+
+        int emoteId = emotePacket.EmoteId;
+        pc._emoteController.PlayEmote(emoteId, 1.0f);
     }
 }

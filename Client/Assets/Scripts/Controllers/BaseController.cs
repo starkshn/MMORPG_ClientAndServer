@@ -40,10 +40,8 @@ public class BaseController : MonoBehaviour
     }
 
     protected bool              _updated = false;
-
     protected Animator          _animator;
     protected SpriteRenderer    _sprite = null;
-
     PositionInfo                _positionInfo = new PositionInfo();
 
     [SerializeField]
@@ -201,6 +199,28 @@ public class BaseController : MonoBehaviour
         {
             
         }
+        else if (State == CState.Hit)
+        {
+            switch (Dir)
+            {
+                case MoveDir.Up:
+                    _animator.Play("HIT_BACK");
+                    _sprite.flipX = false;
+                    break;
+                case MoveDir.Down:
+                    _animator.Play("HIT_FRONT");
+                    _sprite.flipX = false;
+                    break;
+                case MoveDir.Left:
+                    _animator.Play("HIT_RIGHT");
+                    _sprite.flipX = true;
+                    break;
+                case MoveDir.Right:
+                    _animator.Play("HIT_RIGHT");
+                    _sprite.flipX = false;
+                    break;
+            }
+        }
         else if (State == CState.Dead)
         {
             _animator.Play("DEAD");
@@ -226,8 +246,6 @@ public class BaseController : MonoBehaviour
         Vector3 worldPos = Managers.Map.CurrentGrid.CellToWorld(CellPos) + new Vector3(0.5f, 0.5f);
         transform.position = worldPos;
 
-        State = CState.Idle;
-        Dir = MoveDir.Down;
         UpdateAnimation();
     }
 
@@ -237,18 +255,23 @@ public class BaseController : MonoBehaviour
         {
             case CState.Idle:
                 UpdateIdle();
+                UpdateEmote();
                 break;
             case CState.Moving:
                 UpdateMoving();
+                UpdateEmote();
                 break;
             case CState.Skill:
                 UpdateSkill();
+                UpdateEmote();
                 break;
             case CState.Hit:
                 UpdateHit();
+                UpdateEmote();
                 break;
             case CState.Dead:
                 UpdateDead();
+                UpdateEmote();
                 break;
         }
     }
@@ -303,6 +326,11 @@ public class BaseController : MonoBehaviour
     public virtual void OnDamaged()
     {
         
+    }
+
+    protected virtual void UpdateEmote()
+    {
+
     }
 
     #region "스킬 설정"

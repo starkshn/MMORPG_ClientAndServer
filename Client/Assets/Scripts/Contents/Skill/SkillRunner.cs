@@ -13,7 +13,7 @@ public class SkillRunner : MonoBehaviour
 
     SkillAsset                              _currentSkill = null;           // 현재 스킬
     SkillAsset                              _expectedSkill = null;          // 콤보 기대 스킬
-    float                                   _lockUntil = 0.0f;
+    public float                            _lockUntil = 0.0f;
     public float                            _comboUntil = 0.0f;
     MoveDir                                 _currentSkillDir = MoveDir.Down; // 마지막 스킬 방향
     MoveDir                                 _lastSkillDir = MoveDir.Down; // 마지막 스킬 방향

@@ -12,30 +12,39 @@ namespace Server.Game
 {
     public class GameRoom
     {
-        object _lock = new object();
-        public int RoomId { get; set; }
-
-        Dictionary<int, Player> _players = new Dictionary<int, Player>();
-        Dictionary<int, Monster> _monsters = new Dictionary<int, Monster>();
-        Dictionary<int, Projectile> _projectiles = new Dictionary<int, Projectile>();
-
-        public Map Map { get; private set; } = new Map();
+        object                          _lock = new object();
+        public int                      RoomId { get; set; }
+        Dictionary<int, Player>         _players = new Dictionary<int, Player>();
+        Dictionary<int, Monster>        _monsters = new Dictionary<int, Monster>();
+        Dictionary<int, Projectile>     _projectiles = new Dictionary<int, Projectile>();
+        public Map                      Map { get; private set; } = new Map();
 
         public void Init(int mapId)
         {
             Map.LoadMap(mapId);
+
+            // TEMP
+            Monster monster = ObjectManager.Instance.Add<Monster>();
+            monster.CellPos = new Vector2Int(5, 5);
+            EnterGame(monster);
         }
 
         public void Update()
         {
             lock (_lock)
             {
+                foreach (Monster monster in _monsters.Values)
+                {
+                    monster.Update();
+                }
+
                 foreach (Projectile projectile in _projectiles.Values)
                 {
                     projectile.Update();
                 }
             }
         }
+
 
         public void EnterGame(GameObject gameObject)
         {
@@ -53,7 +62,7 @@ namespace Server.Game
                     player.Room = this;
 
                     Map.ApplyMove(player, new Vector2Int(player.CellPos.x, player.CellPos.y));
-
+                    
                     // 본인한테 정보 전송
                     {
                         S_EnterGame enterPacket = new S_EnterGame();
@@ -246,6 +255,17 @@ namespace Server.Game
                         break;
                 }
             }
+        }
+
+        public Player FindPlayer(Func<GameObject, bool> condition)
+        {
+            foreach (Player player in _players.Values)
+            {
+                if (condition.Invoke(player))
+                    return player;
+            }
+
+            return null;
         }
 
         public void Broadcast(IMessage packet)

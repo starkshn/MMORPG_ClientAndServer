@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class CController : BaseController
 {
-    HpBar _hpBar;
-    Coroutine _coHit;
-    Coroutine _coDead;
+    HpBar           _hpBar;
+    Coroutine       _coHit;
+    Coroutine       _coDead;
 
     public override StatInfo Stat
     {
@@ -83,6 +83,10 @@ public class CController : BaseController
         _coDead = StartCoroutine(CoDeadRoutine());
     }
 
+    protected override void UpdateEmote()
+    {
+        
+    }
 
     IEnumerator CoHitRoutine()
     {
@@ -103,5 +107,10 @@ public class CController : BaseController
         _coDead = null;
         
         // TODO
+    }
+
+    public virtual void UseSkill(int skillId)
+    {
+
     }
 }

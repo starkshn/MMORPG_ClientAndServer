@@ -27,11 +27,13 @@ namespace Server
 
 			RoomManager.Instance.Add(1);
 
-			// DNS (Domain Name System)
-			string host = Dns.GetHostName();
+            // DNS (Domain Name System)
+            string host = Dns.GetHostName();
 			IPHostEntry ipHost = Dns.GetHostEntry(host);
-			IPAddress ipAddr = ipHost.AddressList[0];
-			IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
+            IPAddress ipAddr = IPAddress.Any;					// 0.0.0.0
+            // IPAddress ipAddr = IPAddress.Loopback;			// 0.0.0.0
+			// IPAddress ipAddr = ipHost.AddressList[0];
+            IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);	
 
 			_listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
 			Console.WriteLine("Listening...");

@@ -38,8 +38,7 @@ namespace ServerCore
 
 			if (packetCount > 1)
 				Console.WriteLine($"패킷 모아보내기 : {packetCount}");
-
-			return processLen;
+            return processLen;
 		}
 
 		public abstract void OnRecvPacket(ArraySegment<byte> buffer);
@@ -47,16 +46,14 @@ namespace ServerCore
 
 	public abstract class Session
 	{
-		Socket _socket;
-		int _disconnected = 0;
-
-		RecvBuffer _recvBuffer = new RecvBuffer(65535);
-
-		object _lock = new object();
-		Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
-		List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
-		SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
-		SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
+		Socket							_socket;
+		int								_disconnected = 0;
+		RecvBuffer						_recvBuffer = new RecvBuffer(65535);
+		object							_lock = new object();
+		Queue<ArraySegment<byte>>		_sendQueue = new Queue<ArraySegment<byte>>();
+		List<ArraySegment<byte>>		_pendingList = new List<ArraySegment<byte>>();
+		SocketAsyncEventArgs			_sendArgs = new SocketAsyncEventArgs();
+		SocketAsyncEventArgs			_recvArgs = new SocketAsyncEventArgs();
 
 		public abstract void OnConnected(EndPoint endPoint);
 		public abstract int  OnRecv(ArraySegment<byte> buffer);

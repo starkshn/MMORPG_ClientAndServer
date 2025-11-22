@@ -27,11 +27,35 @@ namespace Server.Game.Object
             set { Stat.Speed = value; }
         }
 
+        public int Hp
+        {
+            get { return Stat.Hp; }
+            set { Stat.Hp = Math.Clamp(value, 0, Stat.MaxHp); }
+        }
+
+        public MoveDir Dir
+        {
+            get { return PosInfo.MoveDir; }
+            set { PosInfo.MoveDir = value; }
+        }
+
+        public CState State
+        {
+            get { return PosInfo.State; }
+            set { PosInfo.State = value; }
+        }
+
         public GameObject()
         {
             Info.PosInfo = PosInfo;
             Info.StatInfo = Stat;
         }
+
+        public virtual void Update()
+        {
+
+        }
+
 
         public Vector2Int CellPos
         {
@@ -45,6 +69,18 @@ namespace Server.Game.Object
                 PosInfo.PosX = value.x;
                 PosInfo.PosY = value.y;
             }
+        }
+
+        public static MoveDir GetDirFromVec(Vector2Int dir)
+        {
+            if (dir.x > 0)
+                return MoveDir.Right;
+            else if (dir.x < 0)
+                return MoveDir.Left;
+            else if (dir.y > 0)
+                return MoveDir.Up;
+            else
+                return MoveDir.Down;
         }
 
         public Vector2Int GetFrontCellPos()
@@ -94,6 +130,8 @@ namespace Server.Game.Object
         {
             Console.WriteLine($"Dead By {attacker.Info.Name}");
 
+            State = CState.Dead;
+
             // 1. 클라에게 player 죽음을 알림
             S_Dead deadPacket = new S_Dead();
             deadPacket.ObjectId = Id;
@@ -103,10 +141,6 @@ namespace Server.Game.Object
             GameRoom room = Room;
             JobTimer.Instance.Push(() =>
             {
-                // if (Room != room)
-                //     return;
-
-                // 여기서 완전 제거 후 다시 입장시키는 패턴
                 room.LeaveGame(Id);
 
                 Stat.Hp = Stat.MaxHp;
@@ -116,7 +150,7 @@ namespace Server.Game.Object
                 PosInfo.PosY = 0;
 
                 room.EnterGame(this);
-            }, 600);
+            }, 2000);
         }
     }
 }

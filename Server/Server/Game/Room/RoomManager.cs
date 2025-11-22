@@ -8,9 +8,9 @@ namespace Server.Game.Room
     {
         public static RoomManager Instance { get; } = new RoomManager();
 
-        object _lock = new object();
-        Dictionary<int, GameRoom> _rooms = new Dictionary<int, GameRoom>();
-        int _roomId = 1;
+        object                      _lock = new object();
+        Dictionary<int, GameRoom>   _rooms = new Dictionary<int, GameRoom>();
+        int                         _roomId = 1;
 
         public GameRoom Add(int mapId)
         {

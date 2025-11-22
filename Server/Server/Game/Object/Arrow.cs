@@ -9,8 +9,8 @@ namespace Server.Game
 {
     public class Arrow : Projectile   
     {
-        public GameObject Owner { get; set; }
-        long _nextMoveTick = 0;
+        public GameObject   Owner { get; set; }
+        long                _nextMoveTick = 0;
 
         public override void Update()
         {

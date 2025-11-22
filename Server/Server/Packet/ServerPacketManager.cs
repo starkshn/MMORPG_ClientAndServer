@@ -26,13 +26,14 @@ class PacketManager
 		_onRecv.Add((ushort)MsgId.CMove, MakePacket<C_Move>);
 		_handler.Add((ushort)MsgId.CMove, PacketHandler.C_MoveHandler);		
 		_onRecv.Add((ushort)MsgId.CSkill, MakePacket<C_Skill>);
-		_handler.Add((ushort)MsgId.CSkill, PacketHandler.C_SkillHandler);
+		_handler.Add((ushort)MsgId.CSkill, PacketHandler.C_SkillHandler);		
+		_onRecv.Add((ushort)MsgId.CEmote, MakePacket<C_Emote>);
+		_handler.Add((ushort)MsgId.CEmote, PacketHandler.C_EmoteHandler);
 	}
 
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
 	{
 		ushort count = 0;
-
 		ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
 		count += 2;
 		ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);

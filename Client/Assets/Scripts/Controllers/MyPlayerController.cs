@@ -6,26 +6,57 @@ using static Define;
 
 public class MyPlayerController : PlayerController
 {
-    bool _moveKeyPressed = false;
-
+    bool            _moveKeyPressed = false;
+    int             _chatPressedCount = 0;
+    bool            _chatFlag = false;
+    
     protected override void Init()
     {
         base.Init();
+
+        // 채팅 전송 콜백 등록
+        if (_chattingController != null)
+        {
+            _chattingController.OnSubmitChat = HandleChatSubmit;
+        }
+    }
+
+    void HandleChatSubmit(string msg)
+    {
+        // 이 함수는 ChattingController가 Enter 눌렀을 때 불러줌
+        if (string.IsNullOrEmpty(msg))
+            return;
+
+        // 1) 서버로 패킷 보내기
+        // C_Chat chatPacket = new C_Chat();
+        // chatPacket.Message = msg;
+        // Managers.Network.Send(chatPacket);
+
+        // 2) 내 머리 위 말풍선 띄우고 싶다면
+        // _emoteController.ShowChat(msg);
     }
 
     protected override void UpdateController()
     {
-        switch(State)
+        if (_chatFlag)
         {
-            case CState.Idle:
-                GetDirInput();
-                break;
-            case CState.Moving:
-                GetDirInput();
-                break;
+            GetChatInput();
         }
+        else
+        {
+            switch (State)
+            {
+                case CState.Idle:
+                    GetDirInput();
+                    GetChatInput();
+                    break;
+                case CState.Moving:
+                    GetDirInput();
+                    break;
+            }
 
-        base.UpdateController();
+            base.UpdateController();
+        }
     }
 
     protected override void UpdateIdle()
@@ -192,6 +223,55 @@ public class MyPlayerController : PlayerController
             movePacket.PosInfo = PosInfo;
             Managers.Network.Send(movePacket);
             _updated = false;
+        }
+    }
+
+    protected override void UpdateEmote()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            // todo packet 보내기
+            _emoteController.PlayEmote(1, 1.0f);
+            
+            C_Emote emotePacket = new C_Emote();
+            emotePacket.ObjectId = Id;
+            emotePacket.EmoteId = 1;
+            Managers.Network.Send(emotePacket);
+        }
+    }
+
+    private void GetChatInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            _chatPressedCount = (_chatPressedCount + 1) % 2;
+            if (_chatPressedCount == 1)         // 채팅 하려고하는 경우
+            {
+                // 뭔가 여러 설정을 해주고 키 입력을 받을 수 있게 해주어야한다.
+
+
+                Debug.Log("Enter ChatMode");
+                _chatFlag = true;
+                _chattingController.EnterChatMode();
+            }
+            else if (_chatPressedCount == 0)     // 채팅 보내는 경우
+            {
+                Debug.Log("Exit ChatMode");
+
+                // 보낸다.
+                _chatFlag = false;
+                _chattingController.ExitChatMode();
+
+            }
+            else
+            {
+
+            }
+        }
+        else
+        {
+            // 여기서 문자열 입력을 받는다.
+            
         }
     }
 }
